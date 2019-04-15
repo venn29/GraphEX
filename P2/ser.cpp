@@ -9,7 +9,6 @@
 #include<gl/GLUT.h>
 #include<math.h>
 
-float x, y, z;
 float xs, ys, zs, xt, yt, zt, xr, yr, zr;
 float ang;
 int func;
