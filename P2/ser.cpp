@@ -1,7 +1,5 @@
 ﻿// ConsoleApplication13.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
-
-#include "pch.h"
 #include <iostream>
 // 图形学HW3
 //分辨率800*600
@@ -12,7 +10,7 @@
 #include<math.h>
 
 float x, y, z;
-float xs, ys,zs, xt, yt,zt;
+float xs, ys, zs, xt, yt, zt, xr, yr, zr;
 float ang;
 int func;
 GLfloat v[4][3] = { {0.0, 0.0, 1.0},
@@ -64,24 +62,8 @@ void divide_tetra(GLfloat *a, GLfloat *b, GLfloat *c, GLfloat *d, int m)
 void Init(void)//初始化函数 
 {
 	glClearColor(2.0, 2.0, 2.0, 1.0);
-	glMatrixMode(GL_PROJECTION);//OpenGL按照三维方式来处理图像，所以需要一个投影变换将三维图形投影到显示器的二维空间中
-	glOrtho(-4, 4, -4, 4, -4, 4);//指定使用正投影将一个x坐标在-400~400，y坐标-300~300范围内的矩形坐标区域投影到显示器窗口
-	glMatrixMode(GL_MODELVIEW);
-	gluLookAt(0 ,2,0, 0, 0, 0, 0,0,1);
-	if (func == 1)
-	{
-		glTranslatef(x, y, z);
-	}
-	else if (func == 2)
-	{
-		glScalef(x, y, z);
-	}
-	else if (func == 3)
-	{
-		glTranslatef(-xs, -ys,-zs);
-		glRotatef(ang, xt - xs, yt - ys, zt - zs);
-
-	}
+	
+	
 //	gluPerspective(1, 0, 1, 3);
 	return;
 }
@@ -90,35 +72,46 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT
 		| GL_DEPTH_BUFFER_BIT);
-	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-4, 4, -4, 4, -4, 4);//指定使用正投影将一个x坐标在-400~400，y坐标-300~300范围内的矩形坐标区域投影到显示器窗口
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0, 2, 0, 0, 0, 0, 0, 0, 1);
+	glTranslatef(xt, yt, zt);
+	glScalef(xs, ys, zs);
+	glRotatef(ang,xr, yr, zr);
 	glBegin(GL_TRIANGLES);
 	divide_tetra(v[0], v[1], v[2], v[3],1);
 	glEnd();
 	glFlush();
 }
-
-int main(int argc, char * argv[])
+void key(unsigned char value, int x, int y)
 {
-	printf("观察者坐标为(0,2,0)\n请选择功能：1、平移\n2、缩放\n3、旋转\n0、不做处理\n");
-	scanf_s("%d", &func);
-	if (func == 1)
+	if (value == 't')
 	{
 		printf("请输入平移向量 x y z \n");
-		scanf_s("%f %f %f", &x, &y, &z);
+		scanf_s("%f %f %f", &xt, &yt, &zt);
 	}
-	else if (func == 2)
+	if (value == 's')
 	{
 		printf("请输入三个维度的缩放因子 x y z \n");
-		scanf_s("%f %f %f", &x, &y, &z);
+		scanf_s("%f %f %f", &xs, &ys, &zs);
 	}
-	else if (func == 3)
+	if (value == 'r')
 	{
-		printf("请输入旋转轴的两个点x1 y1 z1 x2 y2 z2\n");
-		scanf_s("%f %f %f %f %f %f", &xs, &ys,&zs, &xt, &yt,&zt);
-		printf("请输入旋转的角度(0~360)：\n");
-		scanf_s("%f", &ang);
-
+		printf("请输入旋转参数fovy,x,y,z：\n");
+		scanf_s("%f %f %f %f", &ang,&xr,&yr,&zr);
 	}
+	display();
+}
+int main(int argc, char * argv[])
+{
+	//几何变换参数初始化
+	xt = yt = zt = 0;
+	xs = ys = zs = 1;
+	ang = xr = yr = zr = 0;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowPosition(0, 0);//窗口位置
@@ -126,6 +119,7 @@ int main(int argc, char * argv[])
 	glutCreateWindow("Sierpinski");//窗口名
 	Init();
 	glutDisplayFunc(&display);
+	glutKeyboardFunc(key);
 	glutMainLoop();
 	return 0;
 }

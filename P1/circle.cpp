@@ -1,5 +1,4 @@
 ﻿#include <stdlib.h>
-#include"pch.h"
 #include <GL/glut.h>
 #include<stdio.h>
 

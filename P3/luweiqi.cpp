@@ -1,4 +1,4 @@
-// luweiqi.cpp : ´ËÎÄ¼ş°üº¬ "main" º¯Êı¡£³ÌĞòÖ´ĞĞ½«ÔÚ´Ë´¦¿ªÊ¼²¢½áÊø¡£
+// luweiqi.cpp : æ­¤æ–‡ä»¶åŒ…å« "main" å‡½æ•°ã€‚ç¨‹åºæ‰§è¡Œå°†åœ¨æ­¤å¤„å¼€å§‹å¹¶ç»“æŸã€‚
 //
 
 
@@ -13,82 +13,82 @@
 #pragma warning(disable:4996)
 using namespace std;
 GLfloat p[4][3];
-GLfloat xs, ys, zs, xref, yref, zref, Vx, Vy, Vz;		//LookAt²ÎÊı
-GLfloat xwMin, xwMax, ywMin, ywMax, dnear, dfar;		//Õı½»Í¶Ó°²ÎÊı
-GLfloat	angle, aspect, Pnear, Pfar;						//Í¸ÊÓÍ¶Ó°²ÎÊı
-bool  pers;		//Í¸ÊÓÓë·ñ£¬Ä¬ÈÏ²»Í¸ÊÓ¶øÊÇÕı½»
+GLfloat xs, ys, zs, xref, yref, zref, Vx, Vy, Vz;		//LookAtå‚æ•°
+GLfloat xwMin, xwMax, ywMin, ywMax, dnear, dfar;		//æ­£äº¤æŠ•å½±å‚æ•°
+GLfloat	angle, aspect, Pnear, Pfar;						//é€è§†æŠ•å½±å‚æ•°
+bool  pers;		//é€è§†ä¸å¦ï¼Œé»˜è®¤ä¸é€è§†è€Œæ˜¯æ­£äº¤
 float scalex, scaley, scalez;
 float translatex, translatey, translatez;
 float rotateA, rotatex, rotatey, rotatez;
 
-				//ÎÄ¼ş¶ÁÈ¡Ïà¹ØÊı¾İ½á¹¹
-int Ntexturefile;		//ÎÆÀíÎÄ¼şÊıÁ¿
-int Nmaterial;		//²ÄÖÊÊı¾İÊıÁ¿
-int Npoints;		//¶¥µãÊıÁ¿
-int Nchartlet;		//ÌùÍ¼×ø±êÊıÁ¿
-int Nnormal;		//·¨ÏßÊıÁ¿
-int Nmodel;			//Ä£ĞÍÊıÁ¿
+				//æ–‡ä»¶è¯»å–ç›¸å…³æ•°æ®ç»“æ„
+int Ntexturefile;		//çº¹ç†æ–‡ä»¶æ•°é‡
+int Nmaterial;		//æè´¨æ•°æ®æ•°é‡
+int Npoints;		//é¡¶ç‚¹æ•°é‡
+int Nchartlet;		//è´´å›¾åæ ‡æ•°é‡
+int Nnormal;		//æ³•çº¿æ•°é‡
+int Nmodel;			//æ¨¡å‹æ•°é‡
 
-string* texturefile;			//ÎÆÀíÎÄ¼şÃû×Ö
+string* texturefile;			//çº¹ç†æ–‡ä»¶åå­—
 
-struct Material				//²ÄÖÊ
+struct Material				//æè´¨
 {
-	GLfloat ambient[4];		//»·¾³¹â
-	GLfloat diffuse[4];		//Âş·´Éä
-	GLfloat specular[4];		//¾µÃæ·´Éä
-	GLfloat emission[4];		//·øÉä
-	GLfloat shiness;			//¹â°ß
-	GLint index;				//ÎÆÀíÎÄ¼şË÷Òı
+	GLfloat ambient[4];		//ç¯å¢ƒå…‰
+	GLfloat diffuse[4];		//æ¼«åå°„
+	GLfloat specular[4];		//é•œé¢åå°„
+	GLfloat emission[4];		//è¾å°„
+	GLfloat shiness;			//å…‰æ–‘
+	GLint index;				//çº¹ç†æ–‡ä»¶ç´¢å¼•
 };
 Material* materials;
 
-struct Point			//¶¥µãË÷Òı±í
+struct Point			//é¡¶ç‚¹ç´¢å¼•è¡¨
 {
 	float p[3];
 };
 Point* points;
 
-struct Chatlet		//ÌùÍ¼
+struct Chatlet		//è´´å›¾
 {
 	float c[2];
 };
 Chatlet* chatlets;
 
-struct Normal		//·¨Ïß
+struct Normal		//æ³•çº¿
 {
 	float n[3];
 };
 Normal* normals;
 
-float scale[3];		//Ëõ·ÅÏµÊı
+float scale[3];		//ç¼©æ”¾ç³»æ•°
 
-struct Triangle		//Èı½ÇĞÎ
+struct Triangle		//ä¸‰è§’å½¢
 {
 	int  t[9];
 };
 struct Model
 {
-	int Ntriangle;		//Èı½ÇĞÎÊıÁ¿
-	Triangle* T; 		//Èı½ÇĞÎÊı×é
-	int index;	//²ÄÖÊË÷Òı
+	int Ntriangle;		//ä¸‰è§’å½¢æ•°é‡
+	Triangle* T; 		//ä¸‰è§’å½¢æ•°ç»„
+	int index;	//æè´¨ç´¢å¼•
 
 };
 Model* models;
-int* texture;	//¸÷¸öÎÆÀíÍ¼
+int* texture;	//å„ä¸ªçº¹ç†å›¾
 
-void ReadFile()		//½«ÎÄ¼ş¶ÁÈ¡
+void ReadFile()		//å°†æ–‡ä»¶è¯»å–
 {
-	string Buffer;		//»º³åÇø
+	string Buffer;		//ç¼“å†²åŒº
 	string fname = "luweiqi.txt";
 	ifstream fin(fname);
 	if (!fin)
 	{
-		printf("error:ÎŞ·¨´ò¿ªÎÄ¼ş\n");
+		printf("error:æ— æ³•æ‰“å¼€æ–‡ä»¶\n");
 		exit(0);
 	}
-	//ÎÆÀíÎÄ¼ş
+	//çº¹ç†æ–‡ä»¶
 	fin >> Buffer;
-	Ntexturefile = atoi(Buffer.c_str());		//¶ÁÈ¡ÎÆÀíÎÄ¼şÊıÁ¿
+	Ntexturefile = atoi(Buffer.c_str());		//è¯»å–çº¹ç†æ–‡ä»¶æ•°é‡
 	texturefile = new string[Ntexturefile];
 	texture = new int[Ntexturefile];
 	for (int i = 0; i < Ntexturefile; i++)
@@ -97,9 +97,9 @@ void ReadFile()		//½«ÎÄ¼ş¶ÁÈ¡
 		texturefile[i] = Buffer;
 		texture[i] = 0;
 	}
-	//²ÄÖÊ£¨¶Ô¹âµÄ·´Éä£©
+	//æè´¨ï¼ˆå¯¹å…‰çš„åå°„ï¼‰
 	fin >> Buffer;
-	Nmaterial = atoi(Buffer.c_str());		//¶ÁÈ¡²ÄÖÊÊıÁ¿
+	Nmaterial = atoi(Buffer.c_str());		//è¯»å–æè´¨æ•°é‡
 	materials = new Material[Nmaterial];
 	for (int i = 0; i < Nmaterial; i++)
 	{
@@ -124,11 +124,11 @@ void ReadFile()		//½«ÎÄ¼ş¶ÁÈ¡
 		fin >> Buffer;
 		materials[i].index = atoi(Buffer.c_str()) - 1;
 	}
-	//×¢Òâ£¬½«Ë÷ÒıindexµÄÖµ¼õÁË1£¬ÎªÁË·½±ã
+	//æ³¨æ„ï¼Œå°†ç´¢å¼•indexçš„å€¼å‡äº†1ï¼Œä¸ºäº†æ–¹ä¾¿
 
-	//¶¥µã:
+	//é¡¶ç‚¹:
 	fin >> Buffer;
-	Npoints = atoi(Buffer.c_str());		//¶ÁÈ¡¶¥µãÊıÁ¿
+	Npoints = atoi(Buffer.c_str());		//è¯»å–é¡¶ç‚¹æ•°é‡
 	points = new Point[Npoints];
 	for (int i = 0; i < Npoints; i++)
 	{
@@ -139,9 +139,9 @@ void ReadFile()		//½«ÎÄ¼ş¶ÁÈ¡
 		}
 	}
 
-	//ÌùÍ¼×ø±ê
+	//è´´å›¾åæ ‡
 	fin >> Buffer;
-	Nchartlet = atoi(Buffer.c_str());		//¶ÁÈ¡ÌùÍ¼×ø±êÊıÁ¿
+	Nchartlet = atoi(Buffer.c_str());		//è¯»å–è´´å›¾åæ ‡æ•°é‡
 	chatlets = new Chatlet[Nchartlet];
 	for (int i = 0; i < Nchartlet; i++)
 	{
@@ -152,9 +152,9 @@ void ReadFile()		//½«ÎÄ¼ş¶ÁÈ¡
 		}
 	}
 
-	//·¨Ïß£º
+	//æ³•çº¿ï¼š
 	fin >> Buffer;
-	Nnormal = atoi(Buffer.c_str());		//¶ÁÈ¡·¨ÏßÊıÁ¿
+	Nnormal = atoi(Buffer.c_str());		//è¯»å–æ³•çº¿æ•°é‡
 	normals = new Normal[Nnormal];
 	for (int i = 0; i < Nnormal; i++)
 	{
@@ -165,26 +165,26 @@ void ReadFile()		//½«ÎÄ¼ş¶ÁÈ¡
 		}
 	}
 
-	//Ä£ĞÍ:
+	//æ¨¡å‹:
 	fin >> Buffer;
-	Nmodel = atoi(Buffer.c_str());		//¶ÁÈ¡·¨ÏßÊıÁ¿
+	Nmodel = atoi(Buffer.c_str());		//è¯»å–æ³•çº¿æ•°é‡
 	models = new Model[Nmodel];
 
-	//Ëõ·ÅÏµÊı
+	//ç¼©æ”¾ç³»æ•°
 	for (int i = 0; i < 3; i++)
 	{
 		fin >> Buffer;
 		scale[i] = atof(Buffer.c_str());
 	}
-	//¾ßÌåÄ£ĞÍ²ÎÊı
+	//å…·ä½“æ¨¡å‹å‚æ•°
 	for (int i = 0; i < Nmodel; i++)
 	{
 		fin >> Buffer;
 		models[i].Ntriangle = atoi(Buffer.c_str());
 		models[i].T = new Triangle[models[i].Ntriangle];
 		fin >> Buffer;
-		models[i].index = atoi(Buffer.c_str()) - 1;		//Í¬ÑùµÄ£¬Ë÷Òı-1£¬·½±ãÊ¹ÓÃ
-		for (int j = 0; j < models[i].Ntriangle; j++)		//¶ÁÈ¡Ã¿Ò»¸öÈı½ÇĞÎµÄ²ÎÊı
+		models[i].index = atoi(Buffer.c_str()) - 1;		//åŒæ ·çš„ï¼Œç´¢å¼•-1ï¼Œæ–¹ä¾¿ä½¿ç”¨
+		for (int j = 0; j < models[i].Ntriangle; j++)		//è¯»å–æ¯ä¸€ä¸ªä¸‰è§’å½¢çš„å‚æ•°
 		{
 			for (int k = 0; k < 9; k++)
 			{
@@ -194,30 +194,30 @@ void ReadFile()		//½«ÎÄ¼ş¶ÁÈ¡
 		}
 	}
 
-	//¶ÁÈ¡Íê±Ï
+	//è¯»å–å®Œæ¯•
 }
 
-void Init(void)//³õÊ¼»¯º¯Êı ¶ÁÎÄ¼ş
+void Init(void)//åˆå§‹åŒ–å‡½æ•° è¯»æ–‡ä»¶
 {
 	ReadFile();
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glEnable(GL_TEXTURE_2D);	//ÆôÓÃ2DÎÆÀí£¨ÎÆÀí×ø±ê¾ÍÊÇ¶şÎ¬µÄ£©
-	glEnable(GL_DEPTH_TEST);	//»æÖÆ²»Í¸Ã÷µÄÍ¼Ïñ£¬ĞèÒª
-								//ÉèÖÃ¹âÔ´£¬¿ªÆô°Ë¸ö¹âÔ´ÖĞµÄGL_LIGHT0
+	glEnable(GL_TEXTURE_2D);	//å¯ç”¨2Dçº¹ç†ï¼ˆçº¹ç†åæ ‡å°±æ˜¯äºŒç»´çš„ï¼‰
+	glEnable(GL_DEPTH_TEST);	//ç»˜åˆ¶ä¸é€æ˜çš„å›¾åƒï¼Œéœ€è¦
+								//è®¾ç½®å…‰æºï¼Œå¼€å¯å…«ä¸ªå…‰æºä¸­çš„GL_LIGHT0
 	float AmbientColor[] = { 0.2f, 0.0f, 0.0f, 1.0f };
-	glLightfv(GL_LIGHT0, GL_AMBIENT, AmbientColor);		//ÉèÖÃ»·¾³¹âÑÕÉ«£¨ÈıÉ«¹âµÄ³É·Ö£©
+	glLightfv(GL_LIGHT0, GL_AMBIENT, AmbientColor);		//è®¾ç½®ç¯å¢ƒå…‰é¢œè‰²ï¼ˆä¸‰è‰²å…‰çš„æˆåˆ†ï¼‰
 
 	float DiffuseColor[] = { 0.2f, 0.0f, 0.0f, 1.0f };
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, DiffuseColor);		//ÉèÖÃÂşÉä¹âÑÕÉ«
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, DiffuseColor);		//è®¾ç½®æ¼«å°„å…‰é¢œè‰²
 
 	float SpecularColor[] = { 0.2f, 0.0f, 0.0f, 1.0f };
-	glLightfv(GL_LIGHT0, GL_SPECULAR, SpecularColor);	//ÉèÖÃ¾µÃæ¹âÑÕÉ«
+	glLightfv(GL_LIGHT0, GL_SPECULAR, SpecularColor);	//è®¾ç½®é•œé¢å…‰é¢œè‰²
 
 	float Position[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, Position);		//¹âÔ´Î»ÖÃ
+	glLightfv(GL_LIGHT0, GL_POSITION, Position);		//å…‰æºä½ç½®
 
 	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHTING);		//¿ªÆô¹âÕÕÏµÍ³
+	glEnable(GL_LIGHTING);		//å¼€å¯å…‰ç…§ç³»ç»Ÿ
 
 }
 
@@ -231,21 +231,21 @@ void display()
 	glScalef(scalex, scaley, scalez);
 	glRotatef(rotateA, rotatex, rotatey, rotatez);
 	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity(); if (!pers)	//Õı½»Í¶Ó°
+	glLoadIdentity(); if (!pers)	//æ­£äº¤æŠ•å½±
 		glOrtho(xwMin, xwMax, ywMin, ywMax, dnear, dfar);
 	else
 		gluPerspective(angle, aspect, Pnear, Pfar);
 
-	int index;		//µ±Ç°Ê¹ÓÃµÄÎÆÀíÎÄ¼şµÄË÷Òı
-	for (int i = 0; i < Nmodel; i++)		//·ÖÄ£ĞÍ»æÖÆ£¬Ã¿Ò»¸öÄ£ĞÍÓĞ²»Í¬µÄ²ÄÖÊ
+	int index;		//å½“å‰ä½¿ç”¨çš„çº¹ç†æ–‡ä»¶çš„ç´¢å¼•
+	for (int i = 0; i < Nmodel; i++)		//åˆ†æ¨¡å‹ç»˜åˆ¶ï¼Œæ¯ä¸€ä¸ªæ¨¡å‹æœ‰ä¸åŒçš„æè´¨
 	{
-		//ÉèÖÃ²ÄÖÊ
+		//è®¾ç½®æè´¨
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, materials[models[i].index].ambient);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materials[models[i].index].diffuse);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, materials[models[i].index].specular);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, materials[models[i].index].emission);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, materials[models[i].index].shiness);
-		//¼ÓÔØÎÆÀí
+		//åŠ è½½çº¹ç†
 		index = materials[models[i].index].index;
 		texture[i] = SOIL_load_OGL_texture(texturefile[index].c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 		if (!texture[i])
@@ -253,34 +253,34 @@ void display()
 			printf("cannot load the image\n");
 			exit(0);
 		}
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);		//ÏñËØµÄ´æ´¢¸ñÊ½£¬1×Ö½Ú¶ÔÆë
-		glBindTexture(GL_TEXTURE_2D, texture[i]);	//texture2D°ó¶¨µ½textre[i]£¬¼´ÊÇÑ¡ÔñÁËÕâ¸öÎÆÀí
-													//Éè¶¨´ÓÎÆÀí×ø±êÓ³Éäµ½Ö¡»º´æÎ»ÖÃµÄ·½Ê½£¬²Î¼ûhttps://blog.csdn.net/wangdingqiaoit/article/details/51457675
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);		//åƒç´ çš„å­˜å‚¨æ ¼å¼ï¼Œ1å­—èŠ‚å¯¹é½
+		glBindTexture(GL_TEXTURE_2D, texture[i]);	//texture2Dç»‘å®šåˆ°textre[i]ï¼Œå³æ˜¯é€‰æ‹©äº†è¿™ä¸ªçº¹ç†
+													//è®¾å®šä»çº¹ç†åæ ‡æ˜ å°„åˆ°å¸§ç¼“å­˜ä½ç½®çš„æ–¹å¼ï¼Œå‚è§https://blog.csdn.net/wangdingqiaoit/article/details/51457675
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filter²ÎÊı£¬´¦ÀíÓ³Éäµ½×ø±ê·Ç¶ÔÆëµÄÇé¿ö£¬Linear£¬Ê¹ÓÃ¸½½üµÄÎÆËØ¼ÓÈ¨
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Èç¹ûÊÇnearµÄ»°£¬»áÑ¡Ôñ×î½üµÄ×ø±êÖ±½ÓÊ¹ÓÃ
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filterå‚æ•°ï¼Œå¤„ç†æ˜ å°„åˆ°åæ ‡éå¯¹é½çš„æƒ…å†µï¼ŒLinearï¼Œä½¿ç”¨é™„è¿‘çš„çº¹ç´ åŠ æƒ
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // å¦‚æœæ˜¯nearçš„è¯ï¼Œä¼šé€‰æ‹©æœ€è¿‘çš„åæ ‡ç›´æ¥ä½¿ç”¨
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	//wrap²ÎÊı£¬´¦Àíµ±ÎÆÀí×ø±ê³¬³ö·¶Î§µÃµ½Çé¿ö£¬REPEAT,Ö±½ÓºöÂÔ
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);//»·¾³²ÎÊı,ÈçºÎ½áºÏÎÆÀíÖµºÍÔ­ÓĞÑÕÉ«£¿REPLACEÖ±½ÓÌæ´ú
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	//wrapå‚æ•°ï¼Œå¤„ç†å½“çº¹ç†åæ ‡è¶…å‡ºèŒƒå›´å¾—åˆ°æƒ…å†µï¼ŒREPEAT,ç›´æ¥å¿½ç•¥
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);//ç¯å¢ƒå‚æ•°,å¦‚ä½•ç»“åˆçº¹ç†å€¼å’ŒåŸæœ‰é¢œè‰²ï¼ŸREPLACEç›´æ¥æ›¿ä»£
 
-																   //»æÖÆ¸ÃÄ£ĞÍÖĞÃ¿Ò»¸öÈı½ÇĞÎ
+																   //ç»˜åˆ¶è¯¥æ¨¡å‹ä¸­æ¯ä¸€ä¸ªä¸‰è§’å½¢
 		glBegin(GL_TRIANGLES);
-		for (size_t j = 0; j < models[i].Ntriangle; j++)		//±ØĞëÊÇÏÈ·¨Ïò£¬ÔÙÎÆÀí£¬×îºóÈı½Ç£¬·ñÔò»­³öÀ´ºÜÆæ¹Ö
+		for (size_t j = 0; j < models[i].Ntriangle; j++)		//å¿…é¡»æ˜¯å…ˆæ³•å‘ï¼Œå†çº¹ç†ï¼Œæœ€åä¸‰è§’ï¼Œå¦åˆ™ç”»å‡ºæ¥å¾ˆå¥‡æ€ª
 
 		{
-			//µã1
-			glNormal3fv(normals[models[i].T[j].t[2] - 1].n);			//·¨Ïß£¨Ä¬ÈÏË÷Òı-1£©£¬´Ó0¿ªÊ¼
-			glTexCoord2f(chatlets[models[i].T[j].t[1] - 1].c[0], 1 - chatlets[models[i].T[j].t[1] - 1].c[1]);		//ÎÆÀíË÷Òı
+			//ç‚¹1
+			glNormal3fv(normals[models[i].T[j].t[2] - 1].n);			//æ³•çº¿ï¼ˆé»˜è®¤ç´¢å¼•-1ï¼‰ï¼Œä»0å¼€å§‹
+			glTexCoord2f(chatlets[models[i].T[j].t[1] - 1].c[0], 1 - chatlets[models[i].T[j].t[1] - 1].c[1]);		//çº¹ç†ç´¢å¼•
 			glVertex3fv(points[models[i].T[j].t[0] - 1].p);
 			
-			//µã2
-			glNormal3fv(normals[models[i].T[j].t[5] - 1].n);			//·¨Ïß£¨Ä¬ÈÏË÷Òı-1£©£¬´Ó0¿ªÊ¼
-			glTexCoord2f(chatlets[models[i].T[j].t[4] - 1].c[0], 1 - chatlets[models[i].T[j].t[4] - 1].c[1]);		//ÎÆÀíË÷Òı
+			//ç‚¹2
+			glNormal3fv(normals[models[i].T[j].t[5] - 1].n);			//æ³•çº¿ï¼ˆé»˜è®¤ç´¢å¼•-1ï¼‰ï¼Œä»0å¼€å§‹
+			glTexCoord2f(chatlets[models[i].T[j].t[4] - 1].c[0], 1 - chatlets[models[i].T[j].t[4] - 1].c[1]);		//çº¹ç†ç´¢å¼•
 			glVertex3fv(points[models[i].T[j].t[3] - 1].p);
 																		
-			//µã3
-			glNormal3fv(normals[models[i].T[j].t[8] - 1].n);			//·¨Ïß£¨Ä¬ÈÏË÷Òı-1£©£¬´Ó0¿ªÊ¼
-			glTexCoord2f(chatlets[models[i].T[j].t[7] - 1].c[0], 1 - chatlets[models[i].T[j].t[7] - 1].c[1]);		//ÎÆÀíË÷Òı
+			//ç‚¹3
+			glNormal3fv(normals[models[i].T[j].t[8] - 1].n);			//æ³•çº¿ï¼ˆé»˜è®¤ç´¢å¼•-1ï¼‰ï¼Œä»0å¼€å§‹
+			glTexCoord2f(chatlets[models[i].T[j].t[7] - 1].c[0], 1 - chatlets[models[i].T[j].t[7] - 1].c[1]);		//çº¹ç†ç´¢å¼•
 			glVertex3fv(points[models[i].T[j].t[6] - 1].p);
 		}
 		glEnd();
@@ -333,38 +333,38 @@ void key(unsigned char value, int x, int y)
 	}
 	if (value == 'l')
 	{
-		printf("µ±Ç°LookAt²ÎÊıÊÇ£ºxs:%f,ys:%f,zs:%f,xref:%f,yref:%f,zref:%f,Vx:%f,Vy:%f,Vz:%f\n", xs, ys, zs, xref, yref, zref, Vx, Vy, Vz);
-		printf("ÇëÊäÈëLookAt²ÎÊı£¬xs ys zs xref  yref  zref, Vx  Vy  Vz\n");
+		printf("å½“å‰LookAtå‚æ•°æ˜¯ï¼šxs:%f,ys:%f,zs:%f,xref:%f,yref:%f,zref:%f,Vx:%f,Vy:%f,Vz:%f\n", xs, ys, zs, xref, yref, zref, Vx, Vy, Vz);
+		printf("è¯·è¾“å…¥LookAtå‚æ•°ï¼Œxs ys zs xref  yref  zref, Vx  Vy  Vz\n");
 		scanf("%f %f %f%f%f%f%f%f%f", &xs, &ys, &zs, &xref, &yref, &zref, &Vx, &Vy, &Vz);
 	}
 	if (value == 'p')
 	{
-		printf("µ±Ç°perspective²ÎÊıÊÇ£ºfovy:%f,aspect:%f,near:%f,far:%f\n", angle, aspect, Pnear, Pfar);
-		printf("ÇëÊäÈëPerspective²ÎÊı£¬fovy aspect near far \n");
+		printf("å½“å‰perspectiveå‚æ•°æ˜¯ï¼šfovy:%f,aspect:%f,near:%f,far:%f\n", angle, aspect, Pnear, Pfar);
+		printf("è¯·è¾“å…¥Perspectiveå‚æ•°ï¼Œfovy aspect near far \n");
 		scanf("%f %f %f %f", &angle, &aspect, &Pnear, &Pfar);
 	}
 	if (value == 'o')
 	{
-		printf("µ±Ç°glOthor²ÎÊıÊÇ£ºxwMin:%f,xwMax:%f,ywMin:%f,ywMax:%f,near:%f,far:%f\n", xwMin, xwMax, ywMin, ywMax, dnear, dfar);
-		printf("ÇëÊäÈëglOthorÕı½»Í¶Ó°²ÎÊı£¬xwMin xwMax ywMin ywMax dnear dfar\n");
+		printf("å½“å‰glOthorå‚æ•°æ˜¯ï¼šxwMin:%f,xwMax:%f,ywMin:%f,ywMax:%f,near:%f,far:%f\n", xwMin, xwMax, ywMin, ywMax, dnear, dfar);
+		printf("è¯·è¾“å…¥glOthoræ­£äº¤æŠ•å½±å‚æ•°ï¼ŒxwMin xwMax ywMin ywMax dnear dfar\n");
 		scanf("%f %f %f%f%f%f%f%f%f", &xwMin, &xwMax, &ywMin, &ywMax, &dnear, &dfar);
 	}
 	if (value == 'T')	//translate
 	{
-		printf("Ä¿Ç°µÄtranslate²ÎÊıÎª:x:%f,y:%f,z:%f\n", translatex, translatey, translatez);
-		printf("ÇëÔÚÃüÁîĞĞÊäÈëĞÂµÄtranslate²ÎÊı(x,y,z)\n");
+		printf("ç›®å‰çš„translateå‚æ•°ä¸º:x:%f,y:%f,z:%f\n", translatex, translatey, translatez);
+		printf("è¯·åœ¨å‘½ä»¤è¡Œè¾“å…¥æ–°çš„translateå‚æ•°(x,y,z)\n");
 		scanf("%f %f %f", &translatex, &translatey, &translatez);
 	}
 	if (value == 'S')	//scale
 	{
-		printf("Ä¿Ç°µÄscale²ÎÊıÎª:x:%f,y:%f,z:%f\n", scalex, scaley, scalez);
-		printf("ÇëÔÚÃüÁîĞĞÊäÈëĞÂµÄscale²ÎÊı(x,y,z)\n");
+		printf("ç›®å‰çš„scaleå‚æ•°ä¸º:x:%f,y:%f,z:%f\n", scalex, scaley, scalez);
+		printf("è¯·åœ¨å‘½ä»¤è¡Œè¾“å…¥æ–°çš„scaleå‚æ•°(x,y,z)\n");
 		scanf("%f %f %f", &scalex, &scaley, &scalez);
 	}
 	if (value == 'R')
 	{
-		printf("Ä¿Ç°µÄrotate²ÎÊıÎª:angle:%f, x:%f, y:%f, z:%f\n", rotateA, rotatex, rotatey, rotatez);
-		printf("ÇëÔÚÃüÁîĞĞÊäÈëĞÂµÄrotate²ÎÊı(Angle,x,y,z)\n");
+		printf("ç›®å‰çš„rotateå‚æ•°ä¸º:angle:%f, x:%f, y:%f, z:%f\n", rotateA, rotatex, rotatey, rotatez);
+		printf("è¯·åœ¨å‘½ä»¤è¡Œè¾“å…¥æ–°çš„rotateå‚æ•°(Angle,x,y,z)\n");
 		scanf("%f %f %f %f", &rotateA, &rotatex, &rotatey, &rotatez);
 	}
 	display();
@@ -377,7 +377,7 @@ int main(int argc, char * argv[])
 {
 
 	pers = false;
-	//¹Û²ì²ÎÊı
+	//è§‚å¯Ÿå‚æ•°
 	xs = 0;
 	ys = 0;
 	zs = 0;
@@ -387,7 +387,7 @@ int main(int argc, char * argv[])
 	Vx = 0;
 	Vy = 0;
 	Vz = 1;
-	//Õı½»Í¶Ó°²ÎÊı
+	//æ­£äº¤æŠ•å½±å‚æ•°
 	xwMin = -2;
 	xwMax = 2;
 	ywMin = -2;
@@ -395,21 +395,21 @@ int main(int argc, char * argv[])
 	dnear = 0;
 	dfar = 12;
 
-	//Í¸ÊÓÍ¶Ó°²ÎÊı
+	//é€è§†æŠ•å½±å‚æ•°
 	angle = 120;
 	aspect = 1;
 	Pnear = 0.1;
 	Pfar = 5;
-	//¼¸ºÎ±ä»»²ÎÊı³õÊ¼»¯
+	//å‡ ä½•å˜æ¢å‚æ•°åˆå§‹åŒ–
 	scalex = scaley = scalez = 1;
 	translatex = translatey = translatez = 0;
 	rotateA = rotatex = rotatey = rotatez = 0;
-	//³õÊ¼»¯
+	//åˆå§‹åŒ–
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowPosition(0, 0);//´°¿ÚÎ»ÖÃ
-	glutInitWindowSize(800, 800);//´°¿ÚµÄ´óĞ¡
-	glutCreateWindow("luweiqi");//´°¿ÚÃû
+	glutInitWindowPosition(0, 0);//çª—å£ä½ç½®
+	glutInitWindowSize(800, 800);//çª—å£çš„å¤§å°
+	glutCreateWindow("luweiqi");//çª—å£å
 	Init();
 	glutDisplayFunc(&display);
 	glutMouseFunc(mouse);
@@ -417,10 +417,10 @@ int main(int argc, char * argv[])
 	glutMainLoop();
 	return 0;
 }
-// ÈëÃÅÌáÊ¾: 
-//   1. Ê¹ÓÃ½â¾ö·½°¸×ÊÔ´¹ÜÀíÆ÷´°¿ÚÌí¼Ó/¹ÜÀíÎÄ¼ş
-//   2. Ê¹ÓÃÍÅ¶Ó×ÊÔ´¹ÜÀíÆ÷´°¿ÚÁ¬½Óµ½Ô´´úÂë¹ÜÀí
-//   3. Ê¹ÓÃÊä³ö´°¿Ú²é¿´Éú³ÉÊä³öºÍÆäËûÏûÏ¢
-//   4. Ê¹ÓÃ´íÎóÁĞ±í´°¿Ú²é¿´´íÎó
-//   5. ×ªµ½¡°ÏîÄ¿¡±>¡°Ìí¼ÓĞÂÏî¡±ÒÔ´´½¨ĞÂµÄ´úÂëÎÄ¼ş£¬»ò×ªµ½¡°ÏîÄ¿¡±>¡°Ìí¼ÓÏÖÓĞÏî¡±ÒÔ½«ÏÖÓĞ´úÂëÎÄ¼şÌí¼Óµ½ÏîÄ¿
-//   6. ½«À´£¬ÈôÒªÔÙ´Î´ò¿ª´ËÏîÄ¿£¬Çë×ªµ½¡°ÎÄ¼ş¡±>¡°´ò¿ª¡±>¡°ÏîÄ¿¡±²¢Ñ¡Ôñ .sln ÎÄ¼ş
+// å…¥é—¨æç¤º: 
+//   1. ä½¿ç”¨è§£å†³æ–¹æ¡ˆèµ„æºç®¡ç†å™¨çª—å£æ·»åŠ /ç®¡ç†æ–‡ä»¶
+//   2. ä½¿ç”¨å›¢é˜Ÿèµ„æºç®¡ç†å™¨çª—å£è¿æ¥åˆ°æºä»£ç ç®¡ç†
+//   3. ä½¿ç”¨è¾“å‡ºçª—å£æŸ¥çœ‹ç”Ÿæˆè¾“å‡ºå’Œå…¶ä»–æ¶ˆæ¯
+//   4. ä½¿ç”¨é”™è¯¯åˆ—è¡¨çª—å£æŸ¥çœ‹é”™è¯¯
+//   5. è½¬åˆ°â€œé¡¹ç›®â€>â€œæ·»åŠ æ–°é¡¹â€ä»¥åˆ›å»ºæ–°çš„ä»£ç æ–‡ä»¶ï¼Œæˆ–è½¬åˆ°â€œé¡¹ç›®â€>â€œæ·»åŠ ç°æœ‰é¡¹â€ä»¥å°†ç°æœ‰ä»£ç æ–‡ä»¶æ·»åŠ åˆ°é¡¹ç›®
+//   6. å°†æ¥ï¼Œè‹¥è¦å†æ¬¡æ‰“å¼€æ­¤é¡¹ç›®ï¼Œè¯·è½¬åˆ°â€œæ–‡ä»¶â€>â€œæ‰“å¼€â€>â€œé¡¹ç›®â€å¹¶é€‰æ‹© .sln æ–‡ä»¶
